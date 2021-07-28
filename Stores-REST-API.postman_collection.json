@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "f2ba72fe-a9b4-4eda-b412-e5d25bdfc242",
+		"name": "Stores REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register and authenticate",
+			"item": [
+				{
+					"name": "/register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"postman.clearEnvironmentVariable(\"access_token\");",
+									"",
+									"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"",
+									"// tests[\"User creates successfully\"] = jsonData.message === 'User created successfully.';",
+									"tests[\"Content-Type is present in response\"] = postman.getResponseHeader('Content-Type');",
+									"tests[\"Content-Type is 'application/json'\"] = postman.getResponseHeader('Content-Type') === 'application/json';"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user5\",\n    \"password\": \"passqorddd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);",
+									"",
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Body contains access token\"] = responseBody.has(\"access_token\");",
+									"tests[\"Response time is less than 150ms\"] = responseTime < 150;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"user3\",\n    \"password\": \"passqorddd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/stores",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"tests[\"Returns store list\"] = responseBody.has(\"stores\");",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Store list is empty\"] = jsonData.stores.length === 0;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/stores",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"stores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/store/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 404\"] = responseCode.code === 404;",
+									"tests[\"Returns store list\"] = responseBody.has(\"message\");",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Not found message correct\"] = jsonData.message === \"Store not found\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/store/google_store",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store",
+								"google_store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/store/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Store created\"] = jsonData.name === \"google_store\";",
+									"tests[\"Store contains no item\"] = jsonData.items.length === 0;",
+									"",
+									"postman.setEnvironmentVariable(\"store_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/store/google_store",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store",
+								"google_store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Created item name correct\"] = jsonData.name === \"chrome_book\";",
+									"tests[\"Created item price correct\"] = jsonData.price === 12.99;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"price\": 12.99,\n    \"store_id\": {{store_id}}\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/item/chrome_book",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"chrome_book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Found item name correct\"] = jsonData.name === \"chrome_book\";",
+									"tests[\"Found item price correct\"] = jsonData.price === 12.99;",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/item/chrome_book",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"chrome_book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/my_item",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 404\"] = responseCode.code === 404;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Check message is correct\"] = jsonData.message === \"Item not found\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "JWT {{access_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/item/my_item",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"my_item"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/store/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Deleted message correct\"] = jsonData.message === \"Store deleted\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/store/google_store",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"store",
+								"google_store"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/item/<name>",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Deleted message correct\"] = jsonData.message === \"Item deleted\";"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/item/chrome_book",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"item",
+								"chrome_book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/items",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"tests[\"Body contains item\"] = responseBody.has(\"item\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/items",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"items"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
